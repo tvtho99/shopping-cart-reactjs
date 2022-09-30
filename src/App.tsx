@@ -1,56 +1,63 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { useAppSelector } from './app/hooks';
+
+import Layout from './components/Layouts/Layout';
+import LoadingModal from './components/UI/Loading/LoadingModal';
+import { CheckoutPage, HomePage, ProductsPage, ReviewsPage } from './pages';
 
 function App() {
+  const { isRedirecting, isLoading } = useAppSelector(state => state.loading);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+    <div className='bg-gray-200 font-fira-sans'>
+      {isLoading && <LoadingModal />}
+      <Switch>
+        <Layout>
+          <ToastContainer
+            enableMultiContainer
+            toastStyle={{
+              backgroundColor: '#10B981',
+              color: '#fff',
+              fontWeight: '500',
+              width: '15rem',
+            }}
+            position='bottom-left'
+            autoClose={2000}
+            hideProgressBar={true}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            draggable
+            containerId={'addToCartToast'}
+          />
+          <ToastContainer
+            enableMultiContainer
+            toastStyle={{
+              backgroundColor: '#1ABA85',
+              color: '#fff',
+              fontWeight: '500',
+            }}
+            position='top-center'
+            autoClose={2000}
+            hideProgressBar={true}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            draggable
+            containerId={'submitCartToast'}
+          />
+          {isRedirecting ? <Redirect to='/products' /> : null}
+          <Route path='/' exact component={HomePage} />
+          <Route path='/products' component={ProductsPage} />
+          <Route path='/reviews' component={ReviewsPage} />
+          <Route path='/checkout' component={CheckoutPage} />
+          <Route path='*'>
+            <Redirect to='/products' />
+          </Route>
+        </Layout>
+      </Switch>
     </div>
   );
 }
